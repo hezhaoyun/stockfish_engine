@@ -5,7 +5,7 @@ project(stockfish)
 add_link_options(-Wl,-z,max-page-size=16384)
 add_link_options(-Wl,-z,common-page-size=16384)
 
-file(GLOB_RECURSE cppPaths "../ios/stockfish/Sources/stockfish/Engine/src/*.cpp")
+file(GLOB_RECURSE cppPaths CONFIGURE_DEPENDS "../ios/stockfish/Sources/stockfish/Engine/src/*.cpp")
 add_library(
   stockfish
   SHARED
