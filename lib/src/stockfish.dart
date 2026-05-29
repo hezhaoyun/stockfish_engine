@@ -84,7 +84,36 @@ class Stockfish {
 
   /// Stops the C++ engine.
   void dispose() {
-    stdin = 'quit';
+    if (_state.value == StockfishState.ready || _state.value == StockfishState.starting) {
+      stdin = 'quit';
+    }
+    _instance = null;
+    nativeResetState();
+  }
+
+  /// Stops the C++ engine and waits for isolates to finish.
+  /// This is useful for hot restart scenarios.
+  Future<void> disposeAndWait() async {
+    if (_state.value == StockfishState.ready || _state.value == StockfishState.starting) {
+      stdin = 'quit';
+    }
+    _instance = null;
+
+    // Wait for isolates to finish (max 2 seconds)
+    int waitCount = 0;
+    while (_state.value != StockfishState.disposed &&
+           _state.value != StockfishState.error &&
+           waitCount < 20) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      waitCount++;
+    }
+
+    // Cancel subscriptions if still pending
+    await _mainSubscription.cancel();
+    await _stdoutSubscription.cancel();
+
+    // Reset native state
+    nativeResetState();
   }
 
   void _cleanUp(int exitCode) {
@@ -128,27 +157,55 @@ class _StockfishState extends ChangeNotifier
   }
 }
 
-void _isolateMain(SendPort mainPort) {
+Future<void> _isolateMain(SendPort mainPort) async {
+  //
   final exitCode = nativeMain();
-  mainPort.send(exitCode);
+
+  // nativeMain() now starts a background thread and returns immediately.
+  // Poll until the engine thread finishes, yielding to allow Hot Restart.
+  if (exitCode == 0) {
+    while (nativeIsRunning()) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    mainPort.send(0);
+  } else {
+    mainPort.send(exitCode);
+  }
 
   _logger.fine('nativeMain returns $exitCode');
 }
 
-void _isolateStdout(SendPort stdoutPort) {
+Future<void> _isolateStdout(SendPort stdoutPort) async {
+  //
   String previous = '';
 
   while (true) {
+    //
     final pointer = nativeStdoutRead();
 
     if (pointer.address == 0) {
-      _logger.fine('nativeStdoutRead returns NULL');
-      return;
+      // Non-blocking read returned no data.
+      if (!nativeIsRunning()) {
+        // Could be startup race or engine stopped. Wait and recheck.
+        await Future.delayed(const Duration(milliseconds: 100));
+        if (!nativeIsRunning()) return;
+      }
+      await Future.delayed(const Duration(milliseconds: 20));
+      continue;
     }
 
-    final data = previous + pointer.toDartString();
+    final String data;
+    try {
+      data = previous + pointer.toDartString();
+    } catch (e) {
+      _logger.warning('Failed to convert stdout to DartString: $e');
+      continue;
+    }
+
     final lines = data.split('\n');
+
     previous = lines.removeLast();
+
     for (final line in lines) {
       stdoutPort.send(line);
     }

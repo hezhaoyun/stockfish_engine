@@ -15,6 +15,14 @@ final int Function() nativeMain = _nativeLib
     .lookup<NativeFunction<Int32 Function()>>('stockfish_main')
     .asFunction();
 
+final bool Function() nativeIsRunning = _nativeLib
+    .lookup<NativeFunction<Bool Function()>>('stockfish_is_running')
+    .asFunction();
+
+final void Function() nativeResetState = _nativeLib
+    .lookup<NativeFunction<Void Function()>>('stockfish_reset_state')
+    .asFunction();
+
 final int Function(Pointer<Utf8>) nativeStdinWrite = _nativeLib
     .lookup<NativeFunction<IntPtr Function(Pointer<Utf8>)>>(
         'stockfish_stdin_write')

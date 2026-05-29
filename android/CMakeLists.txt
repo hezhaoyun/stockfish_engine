@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.4.1)
+project(stockfish)
 
 # Enable 16KB page size support for Android (required for Google Play)
 add_link_options(-Wl,-z,max-page-size=16384)
 add_link_options(-Wl,-z,common-page-size=16384)
 
-file(GLOB_RECURSE cppPaths "../ios/Stockfish/src/*.cpp")
+file(GLOB_RECURSE cppPaths "../ios/stockfish/Sources/stockfish/Engine/src/*.cpp")
 add_library(
   stockfish
   SHARED
-  ../ios/FlutterStockfish/ffi.cpp
+  ../ios/stockfish/Sources/stockfish/FlutterStockfish/ffi.cpp
   ${cppPaths}
 )
 
@@ -26,5 +27,6 @@ else()
   endif()
 endif()
 
-file(DOWNLOAD https://tests.stockfishchess.org/api/nn/nn-c288c895ea92.nnue ${CMAKE_BINARY_DIR}/nn-c288c895ea92.nnue)
-file(DOWNLOAD https://tests.stockfishchess.org/api/nn/nn-37f18f62d772.nnue ${CMAKE_BINARY_DIR}/nn-37f18f62d772.nnue)
+# Disable NNUE embedding. The app copies NNUE files from Flutter assets and
+# configures them at runtime with UCI EvalFile options.
+target_compile_definitions(stockfish PRIVATE NNUE_EMBEDDING_OFF)

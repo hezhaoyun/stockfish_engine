@@ -13,6 +13,18 @@ stockfish_main();
 #ifdef __cplusplus
 extern "C" __attribute__((visibility("default"))) __attribute__((used))
 #endif
+bool
+stockfish_is_running();
+
+#ifdef __cplusplus
+extern "C" __attribute__((visibility("default"))) __attribute__((used))
+#endif
+void
+stockfish_reset_state();
+
+#ifdef __cplusplus
+extern "C" __attribute__((visibility("default"))) __attribute__((used))
+#endif
 ssize_t
 stockfish_stdin_write(char *data);
 
