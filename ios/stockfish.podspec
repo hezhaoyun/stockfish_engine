@@ -19,8 +19,7 @@ Pod::Spec.new do |s|
                    'stockfish/Sources/stockfish/FlutterStockfish/*',
                    'stockfish/Sources/stockfish/Engine/src/**/*'
   s.public_header_files = 'stockfish/Sources/stockfish/Classes/**/*.h'
-  s.exclude_files = 'stockfish/Sources/stockfish/Engine/src/main.cpp',
-                    'stockfish/Sources/stockfish/Engine/src/incbin/UNLICENCE'
+  s.exclude_files = 'stockfish/Sources/stockfish/Engine/src/incbin/UNLICENCE'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
   s.ios.deployment_target  = '12.0'
@@ -36,9 +35,9 @@ Pod::Spec.new do |s|
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++17',
     'CLANG_CXX_LIBRARY' => 'libc++',
     'OTHER_CPLUSPLUSFLAGS' => '$(inherited) -DNNUE_EMBEDDING_OFF',
-    'OTHER_CPLUSPLUSFLAGS[config=Debug]' => '$(inherited) -std=c++17 -DUSE_PTHREADS -DIS_64BIT -DUSE_POPCNT -DNNUE_EMBEDDING_OFF -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/Engine/src"',
+    'OTHER_CPLUSPLUSFLAGS[config=Debug]' => '$(inherited) -std=c++17 -DUSE_PTHREADS -DIS_64BIT -DUSE_POPCNT -DNNUE_EMBEDDING_OFF -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/Engine/src" -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/FlutterStockfish"',
     'OTHER_LDFLAGS[config=Debug]' => '$(inherited) -std=c++17 -DUSE_PTHREADS -DIS_64BIT -DUSE_POPCNT',
-    'OTHER_CPLUSPLUSFLAGS[config=Release]' => '$(inherited) -fno-exceptions -std=c++17 -DUSE_PTHREADS -DNDEBUG -O3 -DIS_64BIT -DUSE_POPCNT -DUSE_NEON=8 -flto=full -DNNUE_EMBEDDING_OFF -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/Engine/src"',
+    'OTHER_CPLUSPLUSFLAGS[config=Release]' => '$(inherited) -fno-exceptions -std=c++17 -DUSE_PTHREADS -DNDEBUG -O3 -DIS_64BIT -DUSE_POPCNT -DUSE_NEON=8 -flto=full -DNNUE_EMBEDDING_OFF -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/Engine/src" -I"${PODS_TARGET_SRCROOT}/stockfish/Sources/stockfish/FlutterStockfish"',
     'OTHER_LDFLAGS[config=Release]' => '$(inherited) -fno-exceptions -std=c++17 -DUSE_PTHREADS -DNDEBUG -O3 -DIS_64BIT -DUSE_POPCNT -DUSE_NEON=8 -flto=full'
   }
 end

@@ -19,7 +19,6 @@ let package = Package(
                 .product(name: "FlutterFramework", package: "FlutterFramework")
             ],
             exclude: [
-                "Engine/src/main.cpp",
                 "Engine/src/incbin/UNLICENCE"
             ],
             publicHeadersPath: "include",

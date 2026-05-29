@@ -25,11 +25,11 @@
 #define CHILD_READ_FD (pipes[PARENT_WRITE_PIPE][READ_FD])
 #define CHILD_WRITE_FD (pipes[PARENT_READ_PIPE][WRITE_FD])
 
-int main(int, char **);
+int stockfish_engine_main(int, char **);
 
-const char *QUITOK = "quitok\n";
-int pipes[NUM_PIPES][2];
-char buffer[4096];
+static const char *QUITOK = "quitok\n";
+static int pipes[NUM_PIPES][2];
+static char buffer[4096];
 
 // 引擎线程
 static pthread_t engine_thread;
@@ -47,7 +47,7 @@ static void* engine_thread_func(void* arg) {
     int argc = 1;
     char arg0[] = "";
     char *argv[] = {arg0};
-    main(argc, argv);
+    stockfish_engine_main(argc, argv);
 
     std::cout << QUITOK << std::flush;
     engine_running = false;

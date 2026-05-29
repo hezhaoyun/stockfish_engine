@@ -1,5 +1,5 @@
 #import "StockfishPlugin.h"
-#import "ffi.h"
+#import "../FlutterStockfish/ffi.h"
 
 @implementation StockfishPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
